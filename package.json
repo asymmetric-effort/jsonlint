@@ -20,6 +20,10 @@
     "LICENSE.txt",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "clean": "make clean",
     "lint": "make lint",
