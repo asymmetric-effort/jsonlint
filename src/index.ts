@@ -5,6 +5,7 @@ export type { ParseErrorHash } from "./parser.js";
 export { formatJson } from "./formatter.js";
 export { SchemaValidator } from "./schema.js";
 export type { JsonSchema, SchemaError } from "./schema.js";
+export { main } from "./cli.js";
 
 // zaach/jsonlint compat: singleton parser instance
 import { JsonParser } from "./parser.js";
