@@ -134,16 +134,18 @@ function sortObject(obj: unknown): unknown {
   return obj;
 }
 
+export const config = { stdinPath: "/dev/stdin" };
+
 function readStdin(): string {
   try {
-    return readFileSync("/dev/stdin", "utf-8");
+    return readFileSync(config.stdinPath, "utf-8");
   } catch {
     process.stderr.write("Error reading from stdin\n");
     process.exit(1);
   }
 }
 
-export function main(args?: string[]): void {
+export function main(args?: string[], stdinInput?: string): void {
   const cliArgs = args ?? process.argv.slice(2);
   const opts = parseArgs(cliArgs);
 
@@ -164,6 +166,9 @@ export function main(args?: string[]): void {
       return;
     }
     filename = opts.file;
+  } else if (stdinInput !== undefined) {
+    input = stdinInput;
+    filename = "<stdin>";
   } else {
     input = readStdin();
     filename = "<stdin>";

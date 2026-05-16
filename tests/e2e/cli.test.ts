@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
-import { main } from "../../src/cli.js";
+import { main, config } from "../../src/cli.js";
 
 const FIXTURES_DIR = join(import.meta.dir, "../fixtures");
 
@@ -50,13 +50,32 @@ function run(args: string[]): { stdout: string; stderr: string; exitCode: number
   setup();
   try {
     main(args);
-    // If main returns without calling process.exit, it's success
     if (exitCode === null) exitCode = 0;
   } catch (e: unknown) {
     if (e instanceof Error && e.message.startsWith("__EXIT_")) {
       // Expected — process.exit was called
     } else {
-      throw e; // Unexpected error
+      throw e;
+    }
+  } finally {
+    teardown();
+  }
+  return { stdout, stderr, exitCode: exitCode ?? 0 };
+}
+
+function runWithStdin(
+  args: string[],
+  input: string,
+): { stdout: string; stderr: string; exitCode: number } {
+  setup();
+  try {
+    main(args, input);
+    if (exitCode === null) exitCode = 0;
+  } catch (e: unknown) {
+    if (e instanceof Error && e.message.startsWith("__EXIT_")) {
+      // Expected
+    } else {
+      throw e;
     }
   } finally {
     teardown();
@@ -329,15 +348,27 @@ describe("CLI: --environment flag", () => {
 });
 
 describe("CLI: stdin reading", () => {
-  it("should read from /dev/stdin when no file argument given", () => {
-    // When no file is given, main() calls readStdin() which reads /dev/stdin.
-    // We can't easily pipe in tests, but we can verify the code path is reached
-    // by passing no args — it will try to read /dev/stdin and either succeed
-    // (if stdin is a tty/empty) or error. Either way, the code path is covered.
-    // In CI, /dev/stdin may be empty, which produces a parse error on empty input.
+  it("should read from stdin when no file argument given", () => {
     const result = run([]);
-    // Should have tried to read stdin and either parsed or errored
     expect(result.exitCode === 0 || result.exitCode === 1).toBe(true);
+  });
+
+  it("should use stdinInput parameter when provided", () => {
+    const result = runWithStdin([], '{"key": "value"}');
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('"key"');
+  });
+
+  it("should handle stdin read failure gracefully", () => {
+    const original = config.stdinPath;
+    config.stdinPath = "/nonexistent/path/that/does/not/exist";
+    try {
+      const result = run([]);
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain("Error reading from stdin");
+    } finally {
+      config.stdinPath = original;
+    }
   });
 });
 
