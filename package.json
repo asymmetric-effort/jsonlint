@@ -1,6 +1,6 @@
 {
   "name": "@asymmetric-effort/jsonlint",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A pure JavaScript/TypeScript JSON parser and validator with detailed error reporting — zero dependencies",
   "type": "module",
   "main": "build/index.js",
