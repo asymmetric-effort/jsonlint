@@ -1,6 +1,4 @@
-import { createElement } from "@asymmetric-effort/specifyjs";
-
-export function CliPage() {
+export function CliPage(): string {
   const options = [
     ["-v", "--version", "Print version and exit"],
     ["-s", "--sort-keys", "Sort object keys in output"],
@@ -14,79 +12,41 @@ export function CliPage() {
     ["-h", "--help", "Show help message"],
   ];
 
-  return createElement(
-    "div",
-    null,
-    createElement(
-      "div",
-      { className: "section" },
-      createElement("h2", null, "CLI Reference"),
-      createElement(
-        "p",
-        null,
-        "The jsonlint command-line tool validates, formats, and optionally transforms JSON files.",
-      ),
-      createElement("pre", null, createElement("code", null, "jsonlint [OPTIONS] [FILE]")),
-      createElement("p", null, "If FILE is omitted, reads from stdin."),
-    ),
-    createElement(
-      "div",
-      { className: "section" },
-      createElement("h2", null, "Options"),
-      createElement(
-        "table",
-        null,
-        createElement(
-          "thead",
-          null,
-          createElement(
-            "tr",
-            null,
-            createElement("th", null, "Flag"),
-            createElement("th", null, "Long Form"),
-            createElement("th", null, "Description"),
-          ),
-        ),
-        createElement(
-          "tbody",
-          null,
-          ...options.map(([flag, long, desc]) =>
-            createElement(
-              "tr",
-              { key: flag },
-              createElement("td", null, createElement("code", null, flag)),
-              createElement("td", null, createElement("code", null, long)),
-              createElement("td", null, desc),
-            ),
-          ),
-        ),
-      ),
-    ),
-    createElement(
-      "div",
-      { className: "section" },
-      createElement("h2", null, "Examples"),
-      createElement("h3", null, "Validate and pretty-print"),
-      createElement("pre", null, createElement("code", null, "jsonlint data.json")),
-      createElement("h3", null, "Sort keys"),
-      createElement("pre", null, createElement("code", null, "jsonlint -s data.json")),
-      createElement("h3", null, "Format in place"),
-      createElement("pre", null, createElement("code", null, "jsonlint -i data.json")),
-      createElement("h3", null, "Validate against a schema"),
-      createElement("pre", null, createElement("code", null, "jsonlint -V schema.json data.json")),
-      createElement("h3", null, "Compact errors (for editor integration)"),
-      createElement(
-        "pre",
-        null,
-        createElement(
-          "code",
-          null,
-          `$ jsonlint -c bad.json
-bad.json: line 2, col 5, found: '}' - expected: 'STRING'.`,
-        ),
-      ),
-      createElement("h3", null, "Read from stdin"),
-      createElement("pre", null, createElement("code", null, "echo '{\"key\": \"value\"}' | jsonlint -q")),
-    ),
-  );
+  const optionRows = options
+    .map(
+      ([flag, long, desc]) =>
+        `<tr><td><code>${flag}</code></td><td><code>${long}</code></td><td>${desc}</td></tr>`,
+    )
+    .join("");
+
+  return `
+    <div class="section">
+      <h2>CLI Reference</h2>
+      <p>The jsonlint command-line tool validates, formats, and optionally transforms JSON files.</p>
+      <pre><code>jsonlint [OPTIONS] [FILE]</code></pre>
+      <p>If FILE is omitted, reads from stdin.</p>
+    </div>
+    <div class="section">
+      <h2>Options</h2>
+      <table>
+        <thead><tr><th>Flag</th><th>Long Form</th><th>Description</th></tr></thead>
+        <tbody>${optionRows}</tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Examples</h2>
+      <h3>Validate and pretty-print</h3>
+      <pre><code>jsonlint data.json</code></pre>
+      <h3>Sort keys</h3>
+      <pre><code>jsonlint -s data.json</code></pre>
+      <h3>Format in place</h3>
+      <pre><code>jsonlint -i data.json</code></pre>
+      <h3>Validate against a schema</h3>
+      <pre><code>jsonlint -V schema.json data.json</code></pre>
+      <h3>Compact errors (for editor integration)</h3>
+      <pre><code>$ jsonlint -c bad.json
+bad.json: line 2, col 5, found: '}' - expected: 'STRING'.</code></pre>
+      <h3>Read from stdin</h3>
+      <pre><code>echo '{"key": "value"}' | jsonlint -q</code></pre>
+    </div>`;
 }

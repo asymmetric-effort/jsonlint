@@ -272,9 +272,35 @@ th {
 
 /* Footer */
 .footer {
-  text-align: center;
   padding: 1.5rem;
   border-top: 1px solid var(--color-border);
   color: var(--color-text-muted);
   font-size: 0.85rem;
+}
+
+.footer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.footer-inner span {
+  min-width: 150px;
+}
+
+.footer-inner span:first-child {
+  text-align: left;
+}
+
+.footer-inner span:nth-child(2) {
+  text-align: center;
+  flex: 1;
+}
+
+.footer-inner span:last-child {
+  text-align: right;
 }
