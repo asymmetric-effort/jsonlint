@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="jsonlint" width="128" height="128" />
+</p>
+
 # @asymmetric-effort/jsonlint
 
 A pure TypeScript JSON parser, linter, and validator with detailed error reporting. Zero runtime dependencies.
