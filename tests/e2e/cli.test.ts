@@ -128,13 +128,21 @@ describe("E2E: CLI", () => {
   });
 
   describe("--compact flag", () => {
-    it("should print compact error with -c", () => {
+    it("should print compact error with -c for parse errors", () => {
       const result = run(["-c"], '{"a": 1 "b": 2}');
       expect(result.exitCode).toBe(1);
       expect(result.stderr).toContain("line");
       expect(result.stderr).toContain("col");
       expect(result.stderr).toContain("found:");
       expect(result.stderr).toContain("expected:");
+    });
+
+    it("should print compact error with -c for lexer errors", () => {
+      const result = run(["-c"], '{"key": \\invalid}');
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain("<stdin>:");
+      expect(result.stderr).toContain("line");
+      expect(result.stderr).toContain("col");
     });
   });
 

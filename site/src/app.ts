@@ -57,7 +57,7 @@ function renderFooter(): string {
 function render(): void {
   const path = getPath();
   const root = document.getElementById("root")!;
-  const page = pages[path] || pages["/"];
+  const page = Object.prototype.hasOwnProperty.call(pages, path) ? pages[path] : pages["/"];
 
   root.innerHTML = `
     ${renderNav(path)}

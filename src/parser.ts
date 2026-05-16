@@ -22,10 +22,11 @@ export class ParseError extends Error {
 }
 
 export class JsonParser {
-  private lexer: Lexer;
+  lexer: Lexer;
   private currentToken!: Token;
   private previousToken: Token | null = null;
   private input: string = "";
+  yy: Record<string, unknown> = {};
 
   parseError: ((str: string, hash: ParseErrorHash) => never) | null = null;
 

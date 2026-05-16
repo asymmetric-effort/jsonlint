@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { JsonParser, ParseError } from "./parser.js";
+import { LexerError } from "./lexer.js";
 import { formatJson } from "./formatter.js";
 import { SchemaValidator } from "./schema.js";
 import { VERSION } from "./version.js";
@@ -174,12 +175,19 @@ export function main(args?: string[]): void {
   if (opts.compact) {
     parser.parseError = (str: string, hash: ParseErrorHash): never => {
       const line = hash.line;
-      const col = hash.loc.first_column;
+      const col = hash.loc.last_column;
       const found = hash.token === "EOF" ? "EOF" : hash.text || hash.token;
       const expected = hash.expected.join(", ");
       const msg = `${filename}: line ${line}, col ${col}, found: '${found}' - expected: ${expected}.`;
       throw new ParseError(msg, hash);
     };
+  }
+
+  function formatCompactError(e: unknown): string {
+    if (opts.compact && e instanceof LexerError) {
+      return `${filename}: line ${e.line}, col ${e.column}, ${e.message.split("\n")[0]}`;
+    }
+    return e instanceof Error ? e.message : String(e);
   }
 
   let parsed: unknown;
@@ -200,15 +208,13 @@ export function main(args?: string[]): void {
         }
         reformatParser.parse(formatted);
       } catch (e2: unknown) {
-        const msg = e2 instanceof Error ? e2.message : String(e2);
-        process.stderr.write(msg + "\n");
+        process.stderr.write(formatCompactError(e2) + "\n");
       }
       process.exit(1);
       return;
     }
 
-    const msg = e instanceof Error ? e.message : String(e);
-    process.stderr.write(msg + "\n");
+    process.stderr.write(formatCompactError(e) + "\n");
     process.exit(1);
     return;
   }
