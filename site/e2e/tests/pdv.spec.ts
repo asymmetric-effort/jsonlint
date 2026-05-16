@@ -146,7 +146,7 @@ test.describe("Footer Verification", () => {
   test("footer contains GitHub link", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
     await page.waitForSelector("#root footer", { timeout: 10000 });
-    const githubLink = page.locator('#root footer a[href*="github.com/asymmetric-effort/jsonlint"]');
+    const githubLink = page.locator('#root footer a[href="https://github.com/asymmetric-effort/jsonlint"]');
     await expect(githubLink).toBeVisible();
   });
 });
