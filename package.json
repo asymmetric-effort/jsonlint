@@ -1,0 +1,57 @@
+{
+  "name": "@asymmetric-effort/jsonlint",
+  "version": "1.0.0",
+  "description": "A pure JavaScript/TypeScript JSON parser and validator with detailed error reporting — zero dependencies",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "bin": {
+    "jsonlint": "bin/jsonlint"
+  },
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "types": "./build/index.d.ts"
+    }
+  },
+  "files": [
+    "build/",
+    "bin/",
+    "LICENSE.txt",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "make clean",
+    "lint": "make lint",
+    "test": "make test",
+    "build": "make build",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asymmetric-effort/jsonlint.git"
+  },
+  "keywords": [
+    "json",
+    "lint",
+    "linter",
+    "parser",
+    "validator",
+    "jsonlint",
+    "zero-dependency"
+  ],
+  "author": "Asymmetric Effort, LLC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asymmetric-effort/jsonlint/issues"
+  },
+  "homepage": "https://jsonlint.asymmetric-effort.com",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {}
+}
