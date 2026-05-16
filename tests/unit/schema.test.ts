@@ -85,7 +85,9 @@ describe("SchemaValidator", () => {
 
     it("should validate pattern", () => {
       expect(validate("abc123", { type: "string", pattern: "^[a-z]+[0-9]+$" })).toHaveLength(0);
-      expect(validate("123abc", { type: "string", pattern: "^[a-z]+[0-9]+$" }).length).toBeGreaterThan(0);
+      expect(
+        validate("123abc", { type: "string", pattern: "^[a-z]+[0-9]+$" }).length,
+      ).toBeGreaterThan(0);
     });
   });
 
@@ -104,18 +106,14 @@ describe("SchemaValidator", () => {
       expect(
         validate(5, { type: "number", minimum: 5, exclusiveMinimum: true }).length,
       ).toBeGreaterThan(0);
-      expect(
-        validate(6, { type: "number", minimum: 5, exclusiveMinimum: true }),
-      ).toHaveLength(0);
+      expect(validate(6, { type: "number", minimum: 5, exclusiveMinimum: true })).toHaveLength(0);
     });
 
     it("should validate exclusiveMaximum", () => {
       expect(
         validate(5, { type: "number", maximum: 5, exclusiveMaximum: true }).length,
       ).toBeGreaterThan(0);
-      expect(
-        validate(4, { type: "number", maximum: 5, exclusiveMaximum: true }),
-      ).toHaveLength(0);
+      expect(validate(4, { type: "number", maximum: 5, exclusiveMaximum: true })).toHaveLength(0);
     });
 
     it("should validate divisibleBy", () => {
@@ -305,9 +303,16 @@ describe("SchemaValidator", () => {
       };
       const v = new SchemaValidator();
       // Valid: both address and billingAddress have street
-      expect(v.validate({ address: { street: "123 Main" }, billingAddress: { street: "456 Oak" } }, schema)).toHaveLength(0);
+      expect(
+        v.validate(
+          { address: { street: "123 Main" }, billingAddress: { street: "456 Oak" } },
+          schema,
+        ),
+      ).toHaveLength(0);
       // Invalid: billingAddress missing required street
-      expect(v.validate({ address: { street: "123 Main" }, billingAddress: {} }, schema).length).toBeGreaterThan(0);
+      expect(
+        v.validate({ address: { street: "123 Main" }, billingAddress: {} }, schema).length,
+      ).toBeGreaterThan(0);
     });
 
     it("should handle unresolvable $ref gracefully", () => {

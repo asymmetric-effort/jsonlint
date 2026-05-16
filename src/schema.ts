@@ -144,10 +144,13 @@ export class SchemaValidator {
     if (schema.disallow !== undefined) {
       const disallowed = Array.isArray(schema.disallow) ? schema.disallow : [schema.disallow];
       const actualType = getType(instance);
-      if (disallowed.some((t) => {
-        if (t === "integer") return actualType === "number" && Number.isInteger(instance as number);
-        return t === actualType;
-      })) {
+      if (
+        disallowed.some((t) => {
+          if (t === "integer")
+            return actualType === "number" && Number.isInteger(instance as number);
+          return t === actualType;
+        })
+      ) {
         this.addError(path, `Type ${actualType} is disallowed`);
       }
     }
@@ -155,7 +158,10 @@ export class SchemaValidator {
     // Enum
     if (schema.enum !== undefined) {
       if (!schema.enum.some((e) => deepEqual(e, instance))) {
-        this.addError(path, `Value ${JSON.stringify(instance)} is not one of the allowed enum values`);
+        this.addError(
+          path,
+          `Value ${JSON.stringify(instance)} is not one of the allowed enum values`,
+        );
       }
     }
 

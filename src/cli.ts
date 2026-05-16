@@ -1,6 +1,5 @@
 import { readFileSync, writeFileSync } from "fs";
 import { JsonParser, ParseError } from "./parser.js";
-import { LexerError } from "./lexer.js";
 import { formatJson } from "./formatter.js";
 import { SchemaValidator } from "./schema.js";
 import { VERSION } from "./version.js";
@@ -143,7 +142,6 @@ function readStdin(): string {
   }
 }
 
-
 export function main(args?: string[]): void {
   const cliArgs = args ?? process.argv.slice(2);
   const opts = parseArgs(cliArgs);
@@ -221,9 +219,7 @@ export function main(args?: string[]): void {
     try {
       schemaInput = readFileSync(opts.validate, "utf-8");
     } catch {
-      process.stderr.write(
-        `Error: could not open schema file '${opts.validate}'\n`,
-      );
+      process.stderr.write(`Error: could not open schema file '${opts.validate}'\n`);
       process.exit(1);
       return;
     }

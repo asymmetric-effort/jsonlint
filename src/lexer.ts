@@ -33,13 +33,7 @@ export class LexerError extends Error {
   position: number;
   input: string;
 
-  constructor(
-    message: string,
-    line: number,
-    column: number,
-    position: number,
-    input: string,
-  ) {
+  constructor(message: string, line: number, column: number, position: number, input: string) {
     super(message);
     this.name = "LexerError";
     this.line = line;
@@ -51,14 +45,8 @@ export class LexerError extends Error {
   showPosition(): string {
     const lines = this.input.split("\n");
     const errorLine = lines[this.line - 1] || "";
-    const before = errorLine.substring(
-      Math.max(0, this.column - 20),
-      this.column,
-    );
-    const after = errorLine.substring(
-      this.column,
-      this.column + 20,
-    );
+    const before = errorLine.substring(Math.max(0, this.column - 20), this.column);
+    const after = errorLine.substring(this.column, this.column + 20);
     const pad = new Array(before.length + 1).join("-");
     return before + after + "\n" + pad + "^";
   }
@@ -198,10 +186,7 @@ export class Lexer {
             let hex = "";
             for (let i = 0; i < 4; i++) {
               const h = this.input[this.pos];
-              if (
-                h === undefined ||
-                !/[0-9a-fA-F]/.test(h)
-              ) {
+              if (h === undefined || !/[0-9a-fA-F]/.test(h)) {
                 throw new LexerError(
                   `Lexical error on line ${this.line}. Bad string: invalid unicode escape.\n${this.showPositionAt(this.line, this.column)}`,
                   this.line,

@@ -27,9 +27,7 @@ export class JsonParser {
   private previousToken: Token | null = null;
   private input: string = "";
 
-  parseError:
-    | ((str: string, hash: ParseErrorHash) => never)
-    | null = null;
+  parseError: ((str: string, hash: ParseErrorHash) => never) | null = null;
 
   constructor() {
     this.lexer = new Lexer();
@@ -79,10 +77,7 @@ export class JsonParser {
     const line = token.loc.first_line;
     const position = this.showPosition(token);
     const expectedStr = expected.map((t) => `'${t}'`).join(", ");
-    const got =
-      token.type === TokenType.EOF
-        ? "'EOF'"
-        : `'${token.value || token.type}'`;
+    const got = token.type === TokenType.EOF ? "'EOF'" : `'${token.value || token.type}'`;
 
     return `Parse error on line ${line}:\n${position}\nExpecting ${expectedStr}, got ${got}`;
   }

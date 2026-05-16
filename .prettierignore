@@ -1,0 +1,7 @@
+build/
+bin/
+node_modules/
+coverage/
+bun.lock
+site/dist/
+tests/fixtures/

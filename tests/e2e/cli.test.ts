@@ -231,7 +231,16 @@ describe("E2E: CLI", () => {
   });
 
   describe("all pass fixtures via CLI", () => {
-    const passFiles = ["pass1.json", "pass2.json", "pass3.json", "pass4.json", "pass5.json", "pass6.json", "pass7.json", "pass8.json"];
+    const passFiles = [
+      "pass1.json",
+      "pass2.json",
+      "pass3.json",
+      "pass4.json",
+      "pass5.json",
+      "pass6.json",
+      "pass7.json",
+      "pass8.json",
+    ];
     for (const file of passFiles) {
       it(`should accept ${file}`, () => {
         const result = run([join(FIXTURES_DIR, "passes", file)]);

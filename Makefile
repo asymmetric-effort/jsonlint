@@ -1,11 +1,13 @@
-.PHONY: all setup clean lint test e2e build help release release/minor release/major
+.PHONY: all setup clean lint test test-coverage build help release release/minor release/major
 
 PROJECT_NAME := jsonlint
 SRC_DIR := src
 TEST_DIR := tests
 BUILD_DIR := build
 BIN_DIR := bin
+SITE_DIR := site
 VERSION_FILE := VERSION
+BIN := node_modules/.bin
 
 VERSION := $(shell cat $(VERSION_FILE))
 
@@ -15,9 +17,11 @@ SHELL := /bin/bash
 all: build
 
 # ============================================================================
-# Setup — install dependencies
+# Setup — install dependencies and git hooks
 # ============================================================================
 setup:
+	@echo "Installing git hooks..."
+	@bash git-hooks/setup.sh
 	@echo "Installing dependencies..."
 	bun install
 	@echo "Setup complete."
@@ -32,11 +36,23 @@ clean:
 	@echo "Clean complete."
 
 # ============================================================================
-# Lint — run type checking and format checks
+# Lint — run strict linters on all file types
 # ============================================================================
 lint:
 	@echo "Running typecheck..."
 	bun x tsc --noEmit
+	@echo "Running eslint..."
+	bun $(BIN)/eslint $(SRC_DIR)
+	@if find $(TEST_DIR) -name '*.ts' | grep -q .; then bun $(BIN)/eslint $(TEST_DIR); fi
+	@echo "Running markdownlint..."
+	bun $(BIN)/markdownlint '**/*.md' --ignore node_modules --ignore site --ignore build
+	@echo "Running yamllint..."
+	@find . -name '*.yml' -o -name '*.yaml' | grep -v node_modules | grep -v site/node_modules | xargs -r bun $(BIN)/yamllint
+	@echo "Running jsonlint..."
+	@find . -name '*.json' -not -path '*/node_modules/*' -not -path '*/build/*' -not -path '*/site/*' -not -name 'bun.lock' -not -name 'package-lock.json' -not -path '*/tests/fixtures/fails/*' | xargs -r bun run $(SRC_DIR)/bin.ts -q
+	@echo "Running prettier check..."
+	bun $(BIN)/prettier --check '$(SRC_DIR)/**/*.ts'
+	@if find $(TEST_DIR) -name '*.ts' | grep -q .; then bun $(BIN)/prettier --check '$(TEST_DIR)/**/*.ts'; fi
 	@echo "Lint passed."
 
 # ============================================================================
@@ -60,7 +76,7 @@ test-coverage:
 	@echo "Coverage report generated."
 
 # ============================================================================
-# Build — compile TypeScript and create binary
+# Build — compile TypeScript, create binary, pack npm package
 # ============================================================================
 build: clean
 	@echo "Building $(PROJECT_NAME) v$(VERSION)..."
@@ -68,6 +84,8 @@ build: clean
 	bun x tsc --emitDeclarationOnly
 	@echo "Building standalone binary..."
 	bun build $(SRC_DIR)/bin.ts --compile --outfile $(BIN_DIR)/$(PROJECT_NAME)
+	@echo "Packing npm package..."
+	npm pack --dry-run
 	@echo "Build complete."
 
 # ============================================================================
@@ -104,12 +122,12 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  all (default)    Build the project"
-	@echo "  setup            Install dependencies"
+	@echo "  setup            Install dependencies and git hooks"
 	@echo "  clean            Delete build artifacts"
-	@echo "  lint             Run type checker"
+	@echo "  lint             Run all linters (tsc, eslint, markdownlint, yamllint, jsonlint, prettier)"
 	@echo "  test             Run all tests (unit, integration, e2e)"
 	@echo "  test-coverage    Run tests with coverage report"
-	@echo "  build            Build library and standalone binary"
+	@echo "  build            Build library, standalone binary, and verify npm pack"
 	@echo "  release          Bump patch version, commit, and tag"
 	@echo "  release/minor    Bump minor version, commit, and tag"
 	@echo "  release/major    Bump major version, commit, and tag"

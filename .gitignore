@@ -5,3 +5,8 @@ bin
 .DS_Store
 coverage
 bun.lock
+site/dist
+site/node_modules
+site/bun.lock
+playwright-report
+test-results

@@ -1,6 +1,5 @@
 import { describe, it, expect } from "bun:test";
 import { JsonParser, parse, ParseError } from "../../src/parser.js";
-import { LexerError } from "../../src/lexer.js";
 
 describe("Parser", () => {
   describe("parse() function", () => {
@@ -121,14 +120,7 @@ describe("Parser", () => {
     });
 
     it("should parse mixed type array", () => {
-      expect(parse('[1, "two", true, null, {}, []]')).toEqual([
-        1,
-        "two",
-        true,
-        null,
-        {},
-        [],
-      ]);
+      expect(parse('[1, "two", true, null, {}, []]')).toEqual([1, "two", true, null, {}, []]);
     });
   });
 

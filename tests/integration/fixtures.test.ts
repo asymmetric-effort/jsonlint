@@ -8,7 +8,9 @@ const passDir = join(fixturesDir, "passes");
 const failDir = join(fixturesDir, "fails");
 
 describe("Integration: Pass Fixtures", () => {
-  const passFiles = readdirSync(passDir).filter((f) => f.endsWith(".json")).sort();
+  const passFiles = readdirSync(passDir)
+    .filter((f) => f.endsWith(".json"))
+    .sort();
 
   for (const file of passFiles) {
     it(`should parse ${file}`, () => {
@@ -25,7 +27,9 @@ describe("Integration: Pass Fixtures", () => {
 });
 
 describe("Integration: Fail Fixtures", () => {
-  const failFiles = readdirSync(failDir).filter((f) => f.endsWith(".json")).sort();
+  const failFiles = readdirSync(failDir)
+    .filter((f) => f.endsWith(".json"))
+    .sort();
 
   // fail17.json is "too deep" — our parser doesn't enforce depth limits (this is valid behavior)
   const skipFiles = new Set(["fail17.json"]);
