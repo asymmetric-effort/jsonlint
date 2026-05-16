@@ -56,7 +56,7 @@ export function formatJson(json: string, indent: string = "  "): string {
         break;
       case "}":
       case "]":
-        depth--;
+        depth = Math.max(0, depth - 1);
         if (!isPrecededByOpen(result, ch)) {
           result += newline();
         }

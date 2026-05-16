@@ -288,30 +288,38 @@ describe("SchemaValidator", () => {
   });
 
   describe("$ref support", () => {
-    it("should resolve $ref", () => {
+    it("should resolve $ref within the schema tree", () => {
+      // The "address" property has an id, and "billingAddress" uses $ref to point to it
       const schema: JsonSchema = {
         type: "object",
         properties: {
-          name: { $ref: "nameSchema" },
+          address: {
+            id: "addressSchema",
+            type: "object",
+            properties: {
+              street: { type: "string", required: true },
+            },
+          },
+          billingAddress: { $ref: "addressSchema" },
         },
-      };
-      // Register the referenced schema by giving it an id
-      const nameSchema: JsonSchema = {
-        id: "nameSchema",
-        type: "string",
-        minLength: 1,
       };
       const v = new SchemaValidator();
-      // We need to validate with the main schema, which will collect inner schemas.
-      // For this to work, the referenced schema needs to be part of the main schema tree.
-      // Let's use a flat approach.
-      const fullSchema: JsonSchema = {
+      // Valid: both address and billingAddress have street
+      expect(v.validate({ address: { street: "123 Main" }, billingAddress: { street: "456 Oak" } }, schema)).toHaveLength(0);
+      // Invalid: billingAddress missing required street
+      expect(v.validate({ address: { street: "123 Main" }, billingAddress: {} }, schema).length).toBeGreaterThan(0);
+    });
+
+    it("should handle unresolvable $ref gracefully", () => {
+      const schema: JsonSchema = {
         type: "object",
         properties: {
-          name: { type: "string", minLength: 1 },
+          name: { $ref: "nonexistent" },
         },
       };
-      expect(v.validate({ name: "John" }, fullSchema)).toHaveLength(0);
+      const v = new SchemaValidator();
+      // Should not throw, just skip validation for unresolvable ref
+      expect(v.validate({ name: "anything" }, schema)).toHaveLength(0);
     });
   });
 
@@ -342,6 +350,21 @@ describe("SchemaValidator", () => {
       };
       expect(validate({ a: "x", b: 1 }, schema)).toHaveLength(0);
       expect(validate({ a: "x" }, schema).length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("collectSchemas for items", () => {
+    it("should collect schemas from items with id", () => {
+      const schema: JsonSchema = {
+        type: "array",
+        items: {
+          id: "itemSchema",
+          type: "string",
+        },
+      };
+      const v = new SchemaValidator();
+      expect(v.validate(["a", "b"], schema)).toHaveLength(0);
+      expect(v.validate([1, 2], schema).length).toBeGreaterThan(0);
     });
   });
 

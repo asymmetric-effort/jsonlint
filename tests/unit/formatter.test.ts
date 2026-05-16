@@ -124,6 +124,23 @@ describe("Formatter", () => {
   });
 
   describe("edge cases", () => {
+    it("should handle unterminated bracket (isEmptyBracket fallthrough)", () => {
+      // Input with [ but no closing ] — exercises the while-loop exhaustion path
+      const result = formatJson("[");
+      expect(result).toContain("[");
+    });
+
+    it("should handle closing bracket immediately after open (isPrecededByOpen true path)", () => {
+      const result = formatJson("{ }");
+      expect(result).toBe("{}");
+    });
+
+    it("should handle leading close bracket (isPrecededByOpen empty result fallthrough)", () => {
+      // A } as first non-whitespace triggers isPrecededByOpen with empty result
+      const result = formatJson("}");
+      expect(result).toContain("}");
+    });
+
     it("should handle empty input", () => {
       expect(formatJson("")).toBe("");
     });
