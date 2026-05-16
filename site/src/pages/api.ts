@@ -1,4 +1,6 @@
-export function ApiPage(): string {
+import { createElement } from "@asymmetric-effort/specifyjs";
+
+export function ApiPage() {
   const exports = [
     ["parse", "function", "Parse JSON string, return value or throw"],
     ["JsonParser", "class", "Reusable parser with custom error handler"],
@@ -10,27 +12,51 @@ export function ApiPage(): string {
     ["SchemaValidator", "class", "JSON Schema Draft-03 validator"],
   ];
 
-  const exportRows = exports
-    .map(([name, type, desc]) => `<tr><td><code>${name}</code></td><td>${type}</td><td>${desc}</td></tr>`)
-    .join("");
-
-  return `
-    <div class="section">
-      <h2>Module API</h2>
-      <p>Import from <code>@asymmetric-effort/jsonlint</code> to use the parser, formatter, and schema validator programmatically.</p>
-    </div>
-    <div class="section">
-      <h2>parse(input)</h2>
-      <p>Parse a JSON string. Returns the parsed value or throws a ParseError.</p>
-      <pre><code>import { parse } from "@asymmetric-effort/jsonlint";
+  return createElement(
+    "div",
+    null,
+    createElement(
+      "div",
+      { className: "section" },
+      createElement("h2", null, "Module API"),
+      createElement(
+        "p",
+        null,
+        "Import from ",
+        createElement("code", null, "@asymmetric-effort/jsonlint"),
+        " to use the parser, formatter, and schema validator programmatically.",
+      ),
+    ),
+    createElement(
+      "div",
+      { className: "section" },
+      createElement("h2", null, "parse(input)"),
+      createElement("p", null, "Parse a JSON string. Returns the parsed value or throws a ParseError."),
+      createElement(
+        "pre",
+        null,
+        createElement(
+          "code",
+          null,
+          `import { parse } from "@asymmetric-effort/jsonlint";
 
 const result = parse('{"key": "value"}');
-// { key: "value" }</code></pre>
-    </div>
-    <div class="section">
-      <h2>JsonParser</h2>
-      <p>For advanced usage, instantiate a parser with a custom error handler.</p>
-      <pre><code>import { JsonParser, ParseError } from "@asymmetric-effort/jsonlint";
+// { key: "value" }`,
+        ),
+      ),
+    ),
+    createElement(
+      "div",
+      { className: "section" },
+      createElement("h2", null, "JsonParser"),
+      createElement("p", null, "For advanced usage, instantiate a parser with a custom error handler."),
+      createElement(
+        "pre",
+        null,
+        createElement(
+          "code",
+          null,
+          `import { JsonParser, ParseError } from "@asymmetric-effort/jsonlint";
 
 const parser = new JsonParser();
 
@@ -43,23 +69,43 @@ try {
   parser.parse(input);
 } catch (e) {
   // handle error
-}</code></pre>
-    </div>
-    <div class="section">
-      <h2>formatJson(input, indent?)</h2>
-      <p>Best-effort character-by-character JSON formatter. Works even on invalid JSON.</p>
-      <pre><code>import { formatJson } from "@asymmetric-effort/jsonlint";
+}`,
+        ),
+      ),
+    ),
+    createElement(
+      "div",
+      { className: "section" },
+      createElement("h2", null, "formatJson(input, indent?)"),
+      createElement(
+        "p",
+        null,
+        "Best-effort character-by-character JSON formatter. Works even on invalid JSON.",
+      ),
+      createElement(
+        "pre",
+        null,
+        createElement(
+          "code",
+          null,
+          `import { formatJson } from "@asymmetric-effort/jsonlint";
 
-const pretty = formatJson('{"a":1,"b":2}', "  ");
-// {
-//   "a": 1,
-//   "b": 2
-// }</code></pre>
-    </div>
-    <div class="section">
-      <h2>SchemaValidator</h2>
-      <p>Validate parsed JSON against a JSON Schema (Draft-03).</p>
-      <pre><code>import { SchemaValidator } from "@asymmetric-effort/jsonlint";
+const pretty = formatJson('{"a":1,"b":2}', "  ");`,
+        ),
+      ),
+    ),
+    createElement(
+      "div",
+      { className: "section" },
+      createElement("h2", null, "SchemaValidator"),
+      createElement("p", null, "Validate parsed JSON against a JSON Schema (Draft-03)."),
+      createElement(
+        "pre",
+        null,
+        createElement(
+          "code",
+          null,
+          `import { SchemaValidator } from "@asymmetric-effort/jsonlint";
 
 const schema = {
   type: "object",
@@ -70,17 +116,42 @@ const schema = {
 };
 
 const validator = new SchemaValidator();
-const errors = validator.validate({ name: "Alice", age: 30 }, schema);
-
-if (errors.length > 0) {
-  errors.forEach(e => console.error(\`\${e.property}: \${e.message}\`));
-}</code></pre>
-    </div>
-    <div class="section">
-      <h2>Exports</h2>
-      <table>
-        <thead><tr><th>Export</th><th>Type</th><th>Description</th></tr></thead>
-        <tbody>${exportRows}</tbody>
-      </table>
-    </div>`;
+const errors = validator.validate({ name: "Alice", age: 30 }, schema);`,
+        ),
+      ),
+    ),
+    createElement(
+      "div",
+      { className: "section" },
+      createElement("h2", null, "Exports"),
+      createElement(
+        "table",
+        null,
+        createElement(
+          "thead",
+          null,
+          createElement(
+            "tr",
+            null,
+            createElement("th", null, "Export"),
+            createElement("th", null, "Type"),
+            createElement("th", null, "Description"),
+          ),
+        ),
+        createElement(
+          "tbody",
+          null,
+          ...exports.map(([name, type, desc]) =>
+            createElement(
+              "tr",
+              { key: name },
+              createElement("td", null, createElement("code", null, name)),
+              createElement("td", null, type),
+              createElement("td", null, desc),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
